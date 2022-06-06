@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
 const ROOT = path.resolve(__dirname, '../');
 const ENV = process.env.NODE_ENV;
@@ -5,17 +6,28 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+const createCssLoaders = () => {
+  return [
+    MiniCssExtractPlugin.loader,
+    {
+      loader: 'css-loader',
+    },
+  ];
+};
 
 module.exports = {
   mode: ENV || 'production',
   devtool: ENV === 'development' ? 'source-map' : undefined,
   context: ROOT,
-  entry: `${ROOT}/src/index.jsx`,
+  entry: `${ROOT}/src/index.tsx`,
   output: {
     path: `${ROOT}/dist`,
-    filename: '[name].[contentchunk:8].js',
+    filename: '[name].[contenthash:8].js',
   },
   resolve: {
+    extensions: ['.tsx', 'ts', '.js', '.json'],
     alias: {
       react: 'anujs/dist/ReactIE',
       'react-dom': 'anujs/dist/ReactIE',
@@ -25,12 +37,13 @@ module.exports = {
       redux: `${ROOT}/patchs/redux`,
       '@rematch/core': 'anujs/dist/Rematch',
       antd: `${ROOT}/patchs/antd`,
+      '@': `${ROOT}/src`,
     },
   },
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.(j|t)sx?$/,
         use: {
           loader: 'babel-loader',
           options: {
@@ -42,38 +55,8 @@ module.exports = {
                   modules: 'commonjs',
                 },
               ],
-            ],
-            plugins: [
-              [
-                '@babel/plugin-proposal-class-properties',
-                {
-                  loose: true,
-                },
-              ],
-              ['@babel/plugin-syntax-dynamic-import'],
-            ],
-          },
-        },
-      },
-      {
-        test: /\.jsx$/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: [
-              [
-                '@babel/preset-env',
-                {
-                  loose: true,
-                  modules: 'commonjs',
-                },
-              ],
-              [
-                '@babel/preset-react',
-                {
-                  loose: true,
-                },
-              ],
+              '@babel/react',
+              '@babel/typescript',
             ],
             plugins: [
               [
@@ -89,30 +72,18 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: [
-          'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              modules: true,
-              localIdentName: '[local]-_-[hash:base64]',
-            },
-          },
-        ],
+        use: createCssLoaders(),
       },
       {
         test: /\.less$/,
         use: [
-          'style-loader',
-          {
-            loader: 'css-loader',
-          },
+          ...createCssLoaders(),
           {
             loader: 'less-loader',
             options: {
               lessOptions: {
                 modifyVars: {
-                  '@primary-color': 'red',
+                  '@primary-color': '#3154EF',
                 },
                 javascriptEnabled: true,
                 modules: true,
@@ -140,17 +111,6 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: `${ROOT}/src/index.html`,
     }),
-    new UglifyJsPlugin({
-      // development
-      uglifyOptions: {
-        ie8: true,
-        compress: false,
-        mangle: false,
-        output: {
-          beautify: true,
-        },
-      },
-    }),
     new CopyWebpackPlugin(
       [
         {
@@ -161,6 +121,7 @@ module.exports = {
       ],
       {}
     ),
+    new MiniCssExtractPlugin(),
   ],
   devServer: {
     // didn't work on IE8

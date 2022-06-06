@@ -1,0 +1,22 @@
+{
+  "include": ["src/**/*.ts", "src/**/*.js", "src/**/*.tsx"],
+  "compilerOptions": {
+    "jsx": "react",
+    "noEmit": true,
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "strict": true,
+    "checkJs": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "lib": ["dom", "dom.iterable", "ESNext"],
+    "types": [],
+    "typeRoots": ["node_modules/@types"]
+  }
+}
