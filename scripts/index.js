@@ -8,14 +8,34 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-const createCssLoaders = () => {
+const createCssLoaders = (useModules = false) => {
   return [
     MiniCssExtractPlugin.loader,
     {
       loader: 'css-loader',
+      options: {
+        modules: useModules,
+        localIdentName: '[name]__[local]--[hash:base64:6]',
+      },
     },
   ];
 };
+
+const createLessLoader = () => ({
+  loader: 'less-loader',
+  options: {
+    lessOptions: {
+      modifyVars: {
+        '@primary-color': '#3154EF',
+      },
+      javascriptEnabled: true,
+      module: true,
+    },
+  },
+});
+
+const lessReg = /\.less$/;
+const lessModuleReg = /\.module\.less$/;
 
 module.exports = {
   mode: ENV || 'production',
@@ -72,25 +92,16 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: createCssLoaders(),
+        use: createCssLoaders(false),
       },
       {
-        test: /\.less$/,
-        use: [
-          ...createCssLoaders(),
-          {
-            loader: 'less-loader',
-            options: {
-              lessOptions: {
-                modifyVars: {
-                  '@primary-color': '#3154EF',
-                },
-                javascriptEnabled: true,
-                modules: true,
-              },
-            },
-          },
-        ],
+        test: lessReg,
+        exclude: lessModuleReg,
+        use: [...createCssLoaders(false), createLessLoader()],
+      },
+      {
+        test: lessModuleReg,
+        use: [...createCssLoaders(true), createLessLoader()],
       },
     ],
   },

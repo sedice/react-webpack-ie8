@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const ENV = process.env.NODE_ENV;
 const UglifyJS = require('uglify-js');
 const fs = require('fs');
