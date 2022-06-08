@@ -7,6 +7,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+// const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const fs = require('fs');
 
 const createCssLoaders = (useModules = false) => {
   return [
@@ -24,6 +26,24 @@ const createCssLoaders = (useModules = false) => {
 const createLessLoader = () => ({
   loader: 'less-loader',
   options: {
+    additionalData: (content, loaderContext) => {
+      const { resourcePath, rootContext } = loaderContext;
+      const relativePath = path.relative(rootContext, resourcePath);
+
+      // node_modules 目录下的less 文件不该受我们的影响
+      if (relativePath.match(/node_modules/)) {
+        return content;
+      }
+
+      const preload = fs.readFileSync(
+        `${ROOT}/src/assets/styles/preload.less`,
+        {
+          encoding: 'utf-8',
+        }
+      );
+
+      return preload + content;
+    },
     lessOptions: {
       modifyVars: {
         '@primary-color': '#3154EF',
@@ -37,11 +57,30 @@ const createLessLoader = () => ({
 const lessReg = /\.less$/;
 const lessModuleReg = /\.module\.less$/;
 
+const files = fs.readdirSync(`${ROOT}/src/entrys`);
+const entry = files.reduce((map, file) => {
+  const [name] = file.split('.');
+  map[name] = path.resolve(`${ROOT}/src/entrys/${file}`);
+  return map;
+}, {});
+
+const webpackHtmlPlugins = files.reduce((list, file) => {
+  const [name] = file.split('.');
+  list.push(
+    new HtmlWebpackPlugin({
+      template: `${ROOT}/src/index.html`,
+      filename: `${name}.html`,
+      chunks: [name],
+    })
+  );
+  return list;
+}, []);
+
 module.exports = {
   mode: ENV || 'production',
   devtool: ENV === 'development' ? 'source-map' : undefined,
   context: ROOT,
-  entry: `${ROOT}/src/index.tsx`,
+  entry,
   output: {
     path: `${ROOT}/dist`,
     filename: '[name].[contenthash:8].js',
@@ -85,6 +124,9 @@ module.exports = {
                   loose: true,
                 },
               ],
+              ['@babel/plugin-proposal-optional-chaining'],
+              ['@babel/plugin-proposal-nullish-coalescing-operator'],
+
               ['@babel/plugin-syntax-dynamic-import'],
             ],
           },
@@ -119,20 +161,19 @@ module.exports = {
       context: ROOT,
       manifest: `${ROOT}/src/base.manifest.json`,
     }),
-    new HtmlWebpackPlugin({
-      template: `${ROOT}/src/index.html`,
-    }),
     new CopyWebpackPlugin(
       [
         {
           context: ROOT,
           from: 'public',
-          to: 'static',
+          to: 'ie8_static',
         },
       ],
       {}
     ),
     new MiniCssExtractPlugin(),
+    // new CleanWebpackPlugin(),
+    ...webpackHtmlPlugins,
   ],
   devServer: {
     // didn't work on IE8
