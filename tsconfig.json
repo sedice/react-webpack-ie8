@@ -10,6 +10,7 @@
     "esModuleInterop": true,
     "sourceMap": true,
     "baseUrl": ".",
+    "paths": { "@/*": ["src/*"] },
     "strict": true,
     "checkJs": true,
     "allowJs": true,
