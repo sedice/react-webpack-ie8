@@ -46,7 +46,7 @@ const createLessLoader = () => ({
     },
     lessOptions: {
       modifyVars: {
-        '@primary-color': '#3154EF',
+        '@primary-color': '#4D69CA',
       },
       javascriptEnabled: true,
       module: true,
@@ -86,7 +86,7 @@ module.exports = {
     filename: '[name].[contenthash:8].js',
   },
   resolve: {
-    extensions: ['.tsx', 'ts', '.js', '.json'],
+    extensions: ['.tsx', '.ts', '.js', '.json'],
     alias: {
       react: 'anujs/dist/ReactIE',
       'react-dom': 'anujs/dist/ReactIE',

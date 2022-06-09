@@ -17,7 +17,7 @@
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "lib": ["dom", "dom.iterable", "ESNext"],
-    "types": [],
+    "types": ["jquery"],
     "typeRoots": ["node_modules/@types"]
   }
 }

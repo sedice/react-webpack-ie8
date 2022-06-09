@@ -8,3 +8,33 @@
     }
   }
 }
+
+.button_create {
+  display: block;
+  color: @color-primary;
+  border: 1px solid;
+  margin-top: 16px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 4px;
+  user-select: none;
+
+  &:hover {
+    color: lighten(@color-primary, 10%);
+  }
+
+  &:active {
+    color: darken(@color-primary, 5%);
+  }
+
+  &--disabled {
+    cursor: not-allowed;
+    color: lighten(@color-primary, 30%);
+    &:hover,
+    &:active {
+      color: lighten(@color-primary, 30%);
+    }
+  }
+}
