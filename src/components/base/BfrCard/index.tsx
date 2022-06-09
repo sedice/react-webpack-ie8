@@ -5,6 +5,8 @@ interface BfrCardProps {
   title?: string;
   style?: React.CSSProperties;
   renderToolBar?: () => React.ReactNode[];
+  wrapperRef?: React.RefObject<HTMLDivElement>;
+  className?: string;
 }
 class BfrCard extends React.PureComponent<BfrCardProps> {
   render() {
@@ -12,9 +14,8 @@ class BfrCard extends React.PureComponent<BfrCardProps> {
       if (this.props.title) {
         return (
           <>
-            <span className="title-prefix"></span>
-            <span className="title-content">{this.props.title}</span>
-            <div className="title-tool-bar">{this.props.renderToolBar?.()}</div>
+            <span className="bfr-card__title__prefix"></span>
+            <span className="bfr-card__title__content">{this.props.title}</span>
           </>
         );
       }
@@ -22,9 +23,18 @@ class BfrCard extends React.PureComponent<BfrCardProps> {
     };
 
     return (
-      <div className="bfr-card-wrapper" style={this.props.style}>
-        <div className="bfr-card-title">{renderTitle()}</div>
-        <div className="bfr-card-body">{this.props.children}</div>
+      <div
+        className={`bfr-card ${this.props.className}`}
+        style={this.props.style}
+        ref={this.props.wrapperRef}
+      >
+        <div className="bfr-card__title">
+          {renderTitle()}
+          <div className="bfr-card__tool-bar">
+            {this.props.renderToolBar?.()}
+          </div>
+        </div>
+        <div className="bfr-card__body">{this.props.children}</div>
       </div>
     );
   }

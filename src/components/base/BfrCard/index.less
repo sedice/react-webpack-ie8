@@ -1,12 +1,13 @@
-.bfr-card-wrapper {
+.bfr-card {
   border: 1px solid @color-border;
   padding: @padding-md;
   background: #fff;
 
-  .bfr-card-title {
+  &__title {
     position: relative;
     padding: 0 @margin-sm;
-    .title-prefix {
+
+    &__prefix {
       width: 4px;
       display: block;
       height: 20px;
@@ -16,7 +17,7 @@
       top: 4px;
     }
 
-    .title-content {
+    &__content {
       height: 28px;
       font-size: 20px;
       font-weight: 600;
@@ -24,15 +25,15 @@
       line-height: 28px;
       margin-left: 8px;
     }
-
-    .title-tool-bar {
-      position: absolute;
-      right: 0;
-      top: 0;
-    }
   }
 
-  .bfr-card-body {
+  &__tool-bar {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  &__body {
     margin-top: 12px;
   }
 }
