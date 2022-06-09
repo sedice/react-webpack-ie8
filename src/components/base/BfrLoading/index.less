@@ -1,0 +1,38 @@
+.bfr-loading {
+  position: relative;
+  &__mask {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #333;
+    z-index: 500;
+    opacity: 0.3;
+
+    .bfr-loading__img {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+
+      &--size-default {
+        width: 50px;
+        height: 50px;
+      }
+
+      &--size-small {
+        width: 30px;
+        height: 30px;
+      }
+
+      img {
+        position: relative;
+        left: -50%;
+        top: -50%;
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+}
